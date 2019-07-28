@@ -3,11 +3,15 @@ const next = require('next');
 const helmet = require('helmet');
 const session = require('express-session');
 const mongoose = require('mongoose');
-const { check, validationResult } = require('express-validator');
 const compression = require('compression');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const logger = require('morgan');
+const expressValidator = require('express-validator');
+
+//Passport config
+require('./models/User')
+require('./passport');
 
 //Express config
 const routes = require('./routes');
@@ -39,6 +43,7 @@ app.prepare().then(() => {
     server.use(compression());
   }
   server.use(express.json());
+  server.use(expressValidator());
 
   //Next config
   server.get("/_next/*", (req, res) => {
