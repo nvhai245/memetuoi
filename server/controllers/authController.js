@@ -25,20 +25,39 @@ exports.signup = async (req, res) => {
     await User.register(user, password, (err, user) => {
         if (err) {
             console.log(err);
-            return res.status(500).send(err.message)
+            return res.status(500).json(err.message)
         }
         res.json(user);
     });
 };
 
-exports.signin = (req, res, next) => {
-
+exports.login = (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return res.status(500).json(err.message)
+        }
+        if (!user) {
+            res.status(400).json(info.message);
+            return res.redirect('/login');
+        }
+        req.logIn(user, err => {
+            if (err) {
+                return res.status(500).json(err.message)
+            }
+            res.json(user);
+        });
+    })(req, res, next);
 };
 
-exports.signout = (req, res) => {
-
+exports.logout = (req, res) => {
+    res.clearCookie("memetuoi.sid");
+    req.logout();
+    res.json({ message: "Logged out!" });
 };
 
 exports.checkAuth = (req, res, next) => {
-
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
 };
