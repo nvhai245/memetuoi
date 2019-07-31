@@ -55,6 +55,9 @@ const userSchema = new mongoose.Schema(
                 type: String
             }
         },
+        fbId: String,
+        ggId: String,
+        token: String,
         following: [{ type: ObjectId, ref: "User" }],
         followers: [{ type: ObjectId, ref: "User" }]
     },

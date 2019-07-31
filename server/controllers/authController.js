@@ -47,12 +47,40 @@ exports.login = (req, res, next) => {
             res.json(user);
         });
     })(req, res, next);
+    console.log(req);
 };
 
 exports.logout = (req, res) => {
     res.clearCookie("memetuoi.sid");
     req.logout();
     res.json({ message: "Logged out!" });
+};
+
+exports.fbSignupAndLogin = async (accessToken, refreshToken, profile, done) => {
+    User.findOne({ fbId: profile.id }, async (err, user) => {
+        if (err) {
+            console.log(err);  // handle errors!
+        }
+        if (!err && user !== null) {
+            console.log(user);
+            done(null, user);
+        } else {
+            const newUser = await new User({
+                fbId: profile.id,
+                username: profile.displayName,
+                email: `${profile.id}@gmail.com`,
+                token: accessToken
+            });
+            password = "Harin245";
+            await User.register(newUser, password, (err, user) => {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log(user);
+            });
+            done(null, newUser);
+        }
+    });
 };
 
 exports.checkAuth = (req, res, next) => {
