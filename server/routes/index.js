@@ -15,10 +15,15 @@ router.post('/auth/signup', authController.validateSignup, catchErrors(authContr
 router.post('/auth/login', authController.login);
 router.get('/auth/logout', authController.logout);
 router.get('/auth/fblogin', passport.authenticate('facebook'));
-router.get('/auth/facebook/callback', passport.authenticate('facebook', { scope: ['read_stream', 'publish_actions'] }), (req, res) => {
-    res.send('fb login successful!');
-});
-
+router.get('/auth/facebook/callback', passport.authenticate('facebook', { scope: ['read_stream', 'publish_actions'] }),
+    (req, res) => {
+        res.send('fb login successful!');
+    });
+router.get('/auth/gglogin', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
+router.get('/auth/google/callback', passport.authenticate('google'),
+    (req, res) => {
+        res.send('Google login successful!');
+    });
 
 
 
