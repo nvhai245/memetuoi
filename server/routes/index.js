@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const userController = require('../controllers/userController');
 const passport = require('passport');
 
 //Errors handler
@@ -25,6 +26,12 @@ router.get('/auth/google/callback', passport.authenticate('google'),
         res.send('Google login successful!');
     });
 
+// Users
+router.param("userId", userController.getUserById);
+router
+    .route('/users/:userId')
+    .get(userController.getAuthUser);
+router.get("/users", userController.getUsers);
 
 
 

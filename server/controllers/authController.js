@@ -25,9 +25,9 @@ exports.signup = async (req, res) => {
     await User.register(user, password, (err, user) => {
         if (err) {
             console.log(err);
-            return res.status(500).json(err.message)
+            return res.send(err.message);
         }
-        res.json(user);
+        res.send(user);
     });
 };
 
