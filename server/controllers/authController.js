@@ -14,7 +14,7 @@ exports.validateSignup = (req, res, next) => {
     const errors = req.validationErrors();
     if (errors) {
         const firstError = errors.map(error => error.msg)[0];
-        return res.status(400).send(firstError);
+        return res.status(400).json(firstError);
     }
     next();
 };
@@ -24,30 +24,27 @@ exports.signup = async (req, res) => {
     const user = await new User({ username, email, password });
     await User.register(user, password, (err, user) => {
         if (err) {
-            console.log(err);
-            return res.send(err.message);
+            return res.json(err.message);
         }
-        res.send(user);
+        res.json(user);
     });
 };
 
-exports.login = (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+exports.login = async (req, res, next) => {
+    passport.authenticate('local', async (err, user, info) => {
         if (err) {
-            return res.status(500).json(err.message)
+            return res.status(403).json(err.message)
         }
         if (!user) {
-            res.status(400).json(info.message);
-            return res.redirect('/login');
+            return res.status(404).json(info.message);
         }
-        req.logIn(user, err => {
+        await req.logIn(user, err => {
             if (err) {
-                return res.status(500).json(err.message)
+                return res.status(403).json(err.message)
             }
-            res.json(user);
+            res.status(200).json(user);
         });
     })(req, res, next);
-    console.log(req);
 };
 
 exports.logout = (req, res) => {

@@ -23,8 +23,7 @@ exports.getUsers = async (req, res) => {
 
 exports.getAuthUser = (req, res) => {
     if (!req.isAuthUser) {
-        // res.status(403).json({ message: "You are not authorized to see these contents. Please sign in." });
-        return res.send('Not authorized!');
+        return res.json({ message: "You are not authorized to see these contents." });
     }
-    res.send(req.user);
+    res.json(req.user);
 };

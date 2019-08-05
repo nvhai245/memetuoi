@@ -2,20 +2,40 @@ import React from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Router from 'next/router';
+import Link from 'next/link';
 
-const SignupForm = () => {
+const LoginForm = () => {
+    const handleSubmit = (fields, actions) => {
+        event.preventDefault();
+        let code = undefined;
+        fetch('http://localhost:3000/auth/login', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(fields, null, 4),
+        })
+            .then(response => {
+                code = response.status;
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                if (code == 200) {
+                    Router.push(`/users/${data._id}`, `/users/${data._id}`)
+                }
+            });
+        actions.setSubmitting(false);
+    };
     return (
         <Formik
             initialValues={{
-                username: '',
                 email: '',
                 password: '',
                 confirmPassword: ''
             }}
             validationSchema={Yup.object().shape({
-                username: Yup.string()
-                    .min(4, 'Username must be at least 4 characters')
-                    .required('Username is required'),
                 email: Yup.string()
                     .email('Email is invalid')
                     .required('Email is required'),
@@ -26,38 +46,9 @@ const SignupForm = () => {
                     .oneOf([Yup.ref('password'), null], 'Passwords must match')
                     .required('Confirm Password is required')
             })}
-            onSubmit={async fields => {
-                await fetch('http://localhost:3000/auth/signup', {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(fields, null, 4),
-                })
-                .then(response => response.json())
-                .then(data => console.log(data));
-                fetch('http://localhost:3000/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(fields, null, 4),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    Router.push(`/users/${data._id}`);
-                });
-            }}
+            onSubmit={handleSubmit}
             render={({ errors, status, touched }) => (
                 <Form>
-                    <div className="form-group">
-                        <label htmlFor="username">Username</label>
-                        <Field name="username" type="text" className={'form-control' + (errors.username && touched.username ? ' is-invalid' : '')} />
-                        <ErrorMessage name="username" component="div" className="invalid-feedback" />
-                    </div>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
                         <Field name="email" type="text" className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
@@ -74,7 +65,7 @@ const SignupForm = () => {
                         <ErrorMessage name="confirmPassword" component="div" className="invalid-feedback" />
                     </div>
                     <div className="form-group">
-                        <button type="submit" className="btn btn-primary mr-2">Register</button>
+                        <button type="submit" className="btn btn-primary mr-2">Login</button>
                         <button type="reset" className="btn btn-secondary">Reset</button>
                     </div>
                 </Form>
@@ -83,4 +74,4 @@ const SignupForm = () => {
     );
 };
 
-export default SignupForm;
+export default LoginForm;

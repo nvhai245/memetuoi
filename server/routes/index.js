@@ -12,7 +12,7 @@ const catchErrors = fn => {
 };
 
 //Authentication
-router.post('/auth/signup', authController.validateSignup, catchErrors(authController.signup));
+router.post('/auth/signup', authController.validateSignup, authController.signup);
 router.post('/auth/login', authController.login);
 router.get('/auth/logout', authController.logout);
 router.get('/auth/fblogin', passport.authenticate('facebook'));
