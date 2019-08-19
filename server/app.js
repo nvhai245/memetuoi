@@ -10,7 +10,8 @@ const logger = require('morgan');
 const expressValidator = require('express-validator');
 
 //Passport config
-require('./models/User')
+require('./models/User');
+require('./models/Post');
 require('./passport');
 
 //Express config
@@ -95,9 +96,9 @@ app.prepare().then(() => {
     res.status(status).json(message);
   });
 
-  server.get("/profile/:userId", (req, res) => {
+  server.get("/profile/:userId", async (req, res) => {
     const routeParams = Object.assign({}, req.params, req.query);
-    return app.render(req, res, "/profile", routeParams);
+      return app.render(req, res, "/profile", routeParams);
   });
 
   server.get("*", (req, res) => {

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
+const postController = require('../controllers/postController');
 const passport = require('passport');
 
 //Errors handler
@@ -30,9 +31,60 @@ router.get('/auth/google/callback', passport.authenticate('google'),
 router.param("userId", userController.getUserById);
 router
     .route('/users/:userId')
-    .get(userController.getAuthUser);
+    .get(userController.getAuthUser)
+    .put(
+        authController.checkAuth,
+        userController.uploadAvatar,
+        catchErrors(userController.resizeAvatar),
+        catchErrors(userController.updateUser)
+    )
+    .delete(authController.checkAuth, catchErrors(userController.deleteUser));
 router.get("/users", userController.getUsers);
+router
+    .route("/users/profile/:userId")
+    .get(userController.getUserProfile);
 
+    
+// Posts
+router.param("postId", postController.getPostById);
+
+router.put(
+  "/posts/like",
+  authController.checkAuth,
+  catchErrors(postController.toggleLike)
+);
+router.put(
+  "/posts/unlike",
+  authController.checkAuth,
+  catchErrors(postController.toggleLike)
+);
+
+router.put(
+  "/posts/comment",
+  authController.checkAuth,
+  catchErrors(postController.toggleComment)
+);
+router.put(
+  "/posts/uncomment",
+  authController.checkAuth,
+  catchErrors(postController.toggleComment)
+);
+
+router.delete(
+  "/posts/:postId",
+  authController.checkAuth,
+  catchErrors(postController.deletePost)
+);
+
+router.post(
+  "/posts/new/:userId",
+  authController.checkAuth,
+  postController.uploadImage,
+  catchErrors(postController.resizeImage),
+  catchErrors(postController.addPost)
+);
+router.get("/posts/by/:userId", catchErrors(postController.getPostsByUser));
+router.get("/posts/feed/:userId",authController.checkAuth, catchErrors(postController.getPostFeed));
 
 
 module.exports = router;
