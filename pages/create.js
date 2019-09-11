@@ -10,7 +10,7 @@ export default function create(props) {
     )
 }
 
-create.getInitialProps = async function () {
+create.getInitialProps = async () => {
     const { data } = await axios.get('https://api.imgflip.com/get_memes');
     return data;
 };

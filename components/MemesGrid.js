@@ -10,12 +10,20 @@ import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
-import Draggable from 'react-draggable';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
+import DraggableCore from 'react-draggable';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import domtoimage from 'dom-to-image';
 import Button from '@material-ui/core/Button';
 import { saveAs } from 'file-saver';
+import Slider from '@material-ui/core/Slider';
+import { CompactPicker } from 'react-color';
+import ColorLensIcon from '@material-ui/icons/ColorLens';
+import Popover from '@material-ui/core/Popover';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import KeyboardReturnIcon from '@material-ui/icons/KeyboardReturn';
 
+const shortid = require('shortid');
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,11 +49,15 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 0,
   },
   memeText: {
-    padding: theme.spacing(3, 2),
+    padding: theme.spacing(1, 1),
     width: "95%"
   },
   textEdit: {
     marginTop: "2rem"
+  },
+  textField: {
+    width: "60%",
+    marginBottom: 0
   },
   addTextIcon: {
     marginLeft: 0
@@ -59,6 +71,30 @@ const useStyles = makeStyles(theme => ({
     overflowWrap: "normal",
     whiteSpace: "pre",
     maxWidth: "80%",
+    marginBlockEnd: 0,
+    marginBlockStart: 0
+  },
+  fontSliderBox: {
+    display: "inline-block",
+    marginLeft: "1rem"
+  },
+  fontColorBox: {
+    display: "inline-block",
+    marginLeft: "1rem",
+  },
+  deleteIcon: {
+    display: "inline-block",
+    marginLeft: "1rem",
+    marginRight: "none",
+  },
+  previewImage: {
+    margin: "0.5rem",
+    marginBottom: 0
+  },
+  downloadButton: {
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: "0.5rem"
   }
 }));
 
@@ -67,15 +103,28 @@ export default function MemesGrid(props) {
   const [chosenMeme, setChosenMeme] = React.useState(0);
   const [textArray, setTextArray] = React.useState(["ADD TEXT"]);
   const [numberOfText, setNumberOfText] = React.useState(1);
+  const [font, setFont] = React.useState([40]);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
+  const [fontColor, setFontColor] = React.useState(["#ffffff"]);
+  const [popoverIndex, setPopoverIndex] = React.useState(0);
+  const [delta, setDelta] = React.useState([{ x: 280, y: 0 }]);
+  const [ouputUrl, setOuputUrl] = React.useState("");
   const classes = useStyles();
 
   const handleChange = event => {
     setGridOrder(Number(event.target.value));
   }
 
+  const handleFontsizeChange = (event, newValue) => {
+    let newFontArray = [...font];
+    newFontArray[event.target.id] = newValue;
+    setFont(newFontArray);
+  };
+
   const handleTextChange = event => {
     let newTextArray = [...textArray];
-    newTextArray[event.target.id] = event.target.value.toUpperCase();
+    newTextArray[event.target.id] = event.target.value;
     setTextArray(newTextArray);
   }
 
@@ -84,17 +133,80 @@ export default function MemesGrid(props) {
     newTextArray.push("ADD TEXT");
     setTextArray(newTextArray);
     setNumberOfText(numberOfText + 1);
+    let newFontArray = [...font];
+    newFontArray.push(40);
+    setFont(newFontArray);
+    let newFontColor = [...fontColor];
+    newFontColor.push("#ffffff");
+    setFontColor(newFontColor);
+    let newDelta = [...delta];
+    newDelta.push({ x: 280, y: 0 });
+    setDelta(newDelta);
   }
 
   const handleClick = event => {
     setChosenMeme(Number(event.currentTarget.id));
   }
 
-  const doneAndDownload = () => {
+  const openColorPicker = event => {
+    setAnchorEl(event.currentTarget);
+    setPopoverIndex(Number(event.currentTarget.id));
+  }
+
+  const deleteText = event => {
+    let newTextArray = [...textArray];
+    newTextArray.splice(event.currentTarget.id, 1);
+    setTextArray(newTextArray);
+    let newFontArray = [...font];
+    newFontArray.splice(event.currentTarget.id, 1);
+    setFont(newFontArray);
+    let newFontColor = [...fontColor];
+    newFontColor.splice(event.currentTarget.id, 1);
+    setFontColor(newFontColor);
+    let newDelta = [...delta];
+    newDelta.splice(event.currentTarget.id, 1);
+    setDelta(newDelta);
+  }
+
+  const handleColorChange = (color, event) => {
+    let newFontColor = [...fontColor];
+    newFontColor[popoverIndex] = color.hex;
+    console.log(newFontColor);
+    setFontColor(newFontColor);
+  }
+
+  const saveDeltas = (index, event, ui) => {
+    let newDelta = [...delta];
+    newDelta[index] = { x: ui.lastX, y: ui.lastY };
+    setDelta(newDelta);
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  }
+
+  const handleClose2 = () => {
+    setAnchorEl2(null);
+  }
+  const open = Boolean(anchorEl);
+
+  const previewProcess = event => {
     domtoimage.toBlob(document.getElementById('outputImage'))
-      .then(function (blob) {
-        saveAs(blob, 'my-node.png');
+      .then(blob => {
+        setOuputUrl(URL.createObjectURL(blob));
       });
+  }
+
+  const preview = event => {
+    setAnchorEl2(event.currentTarget);
+  }
+  const openPreview = Boolean(anchorEl2);
+
+  const doneAndDownload = () => {
+    let link = document.createElement('a');
+    link.download = 'my-meme.png';
+    link.href = ouputUrl;
+    link.click();
   }
 
   return (
@@ -103,7 +215,7 @@ export default function MemesGrid(props) {
         <Grid item xs={6}>
           <Grid container spacing={4}>
             {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(value => (
-              <Grid onClick={handleClick} key={value + (gridOrder - 1) * 10} id={value + (gridOrder - 1) * 10} item>
+              <Grid onClick={handleClick} key={value} id={value + (gridOrder - 1) * 10} item>
                 <Paper className={classes.paper}>
                   <img
                     src={props.items[value + (gridOrder - 1) * 10].url}
@@ -144,7 +256,6 @@ export default function MemesGrid(props) {
               {textArray.map((value, index) => (
                 <div>
                   <TextField
-                    key={index}
                     id={index}
                     label={"Text" + (index + 1)}
                     className={classes.textField}
@@ -152,40 +263,92 @@ export default function MemesGrid(props) {
                     margin="normal"
                     placeholder={value}
                     defaultValue="ADD TEXT"
-                    fullWidth
                     multiline
+                    value={value}
                   />
+                  <IconButton key={index} id={index} className={classes.fontColorBox} onClick={openColorPicker}>
+                    <ColorLensIcon fontSize="large" color="secondary" />
+                  </IconButton>
+                  <Popover
+                    id={index}
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'center',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'center',
+                    }}
+                  >
+                    <CompactPicker color={fontColor[popoverIndex]} onChangeComplete={handleColorChange} />
+                  </Popover>
+                  <div className={classes.fontSliderBox}>
+                    <Slider
+                      key={index}
+                      id={index}
+                      value={font[index]}
+                      onChange={handleFontsizeChange}
+                      aria-labelledby="continuous-slider"
+                    />
+                    <Typography id="vertical-slider" gutterBottom>
+                      Font-size
+                    </Typography>
+                  </div>
+                  <IconButton className={classes.deleteIcon} id={index} onClick={deleteText}>
+                    <DeleteForeverIcon fontSize="large" />
+                  </IconButton>
                 </div>
               ))}
-              <div className={classes.addTextIcon}>
-                <IconButton onClick={addText} fontSize="large" color="primary" className={classes.addTextButton} aria-label="add text">
-                  <NoteAddIcon />
-                </IconButton>
+              <IconButton className={classes.addTextIcon} onClick={addText} color="primary" className={classes.addTextButton} aria-label="add text">
+                <AddCircleIcon fontSize="large" />
+              </IconButton>
+              <div onMouseEnter={previewProcess}>
+                <Button onClick={preview} variant="contained" color="secondary">Preview</Button>
               </div>
-              <div onClick={doneAndDownload}>
-                <Button variant="contained" color="primary"> Done & Download</Button>
-              </div>
+              <Popover
+                open={openPreview}
+                anchorEl={anchorEl2}
+                onClose={handleClose2}
+                anchorPosition={{
+                  left: 300,
+                  top: 20
+                }}
+                anchorReference="anchorPosition"
+              >
+                <img className={classes.previewImage} src={ouputUrl} alt="" />
+                <div className={classes.downloadButton}>
+                  <Button onClick={handleClose2} color="secondary"><KeyboardReturnIcon /> Re-edit</Button>
+                  <Button onClick={doneAndDownload} color="primary"><GetAppIcon /> Download</Button>
+                </div>
+
+              </Popover>
             </Paper>
           </Grid>
         </Grid>
         <Grid item xs={6}>
           <Paper id="outputImage" className={classes.editGrid}>
             {textArray.map((value, index) => (
-              <Draggable
-                defaultPosition={{ x: 280, y: 0 }}
-                key={index}
+              <DraggableCore
+                onStop={(event, ui) => saveDeltas(index, event, ui)}
+                position={delta[index]}
                 bounds="parent"
               >
                 <h1
                   align="center"
                   className={classes.dragText}
-                  style={{ color: "white", fontSize: "2rem", zIndex: index + 1 }}
-                >{value + " "}</h1>
-              </Draggable>
+                  style={{ color: fontColor[index], fontSize: `${font[index] / 20}rem`, zIndex: index + 1 }}
+                >
+                  {value}
+                </h1>
+              </DraggableCore>
             ))}
             <img
+              className={classes.chosen}
               src={props.items[chosenMeme].url}
-              alt="" className={classes.chosen}
+              alt=""
             />
           </Paper>
         </Grid>

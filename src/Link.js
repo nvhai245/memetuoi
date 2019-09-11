@@ -8,7 +8,6 @@ import MuiLink from '@material-ui/core/Link';
 
 const NextComposed = React.forwardRef(function NextComposed(props, ref) {
   const { as, href, prefetch, ...other } = props;
-
   return (
     <NextLink href={href} prefetch={prefetch} as={as}>
       <a ref={ref} {...other} />

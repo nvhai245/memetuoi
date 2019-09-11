@@ -1,25 +1,34 @@
 import React from 'react';
 import Link from 'next/link';
+import RouterLink from '../src/Link';
 
 export default function index() {
     return (
         <div>
             <h1>Memetuoi</h1>
-            <Link href="/signup">
+            <RouterLink href="/signup">
                 <a>Signup</a>
-            </Link>
+            </RouterLink>
             <p></p>
-            <Link href="/login">
+            <RouterLink href="/login">
                 <a>Login</a>
-            </Link>
+            </RouterLink>
             <p>Or</p>
-            <Link href="/auth/fblogin">
+            <RouterLink href="/auth/fblogin">
                 <a>Login with Facebook</a>
-            </Link>
+            </RouterLink>
             <p>Or</p>
-            <Link href="/auth/gglogin">
+            <RouterLink href="/auth/gglogin">
                 <a>Login with Google</a>
-            </Link>
+            </RouterLink>
+            <p>Or</p>
+            <RouterLink href="/create">
+                <a>Create new meme</a>
+            </RouterLink>
+            <p>Or</p>
+            <RouterLink href="/memes" as="/memes">
+                <a>View top memes</a>
+            </RouterLink>
         </div>
     )
 }

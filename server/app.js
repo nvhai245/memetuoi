@@ -9,6 +9,8 @@ const passport = require('passport');
 const logger = require('morgan');
 const expressValidator = require('express-validator');
 
+// 
+
 //Passport config
 require('./models/User');
 require('./models/Post');
@@ -98,7 +100,7 @@ app.prepare().then(() => {
 
   server.get("/profile/:userId", async (req, res) => {
     const routeParams = Object.assign({}, req.params, req.query);
-      return app.render(req, res, "/profile", routeParams);
+    return app.render(req, res, "/profile", routeParams);
   });
 
   server.get("*", (req, res) => {
