@@ -143,7 +143,7 @@ export default function Header(props) {
     }
 
     const handleLogout = async () => {
-        await axios.get("http://localhost:3000/auth/logout").then(res => {
+        await axios.get("https://fresh-memes.herokuapp.com/logout").then(res => {
             if (res.data.message) {
                 setAnchorEl(null);
                 handleMobileMenuClose();

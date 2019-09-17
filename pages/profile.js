@@ -31,7 +31,7 @@ profile.getInitialProps = async (ctx) => {
       user: {user: ctx.req.user}
     }
   }
-  let userData = await axios.get("http://localhost:3000/api/user_data");
+  let userData = await axios.get("https://fresh-memes.herokuapp.com/api/user_data");
   if (userData.data.user === undefined) {
     ctx.res.writeHead(302, {
       Location: '/login'

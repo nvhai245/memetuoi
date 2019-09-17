@@ -22,7 +22,7 @@ create.getInitialProps = async (ctx) => {
       memeData: data
     }
   }
-  let userData = await axios.get("http://localhost:3000/api/user_data");
+  let userData = await axios.get("https://fresh-memes.herokuapp.com/api/user_data");
   return {
     user: userData.data,
     memeData: data

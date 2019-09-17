@@ -38,7 +38,7 @@ index.getInitialProps = async (ctx) => {
     };
   } else {
     const { data } = await axios.get(`https://cors-anywhere.herokuapp.com/https://reddit.com/r/funny/top/.json?t=day&limit=100`);
-    const user = await axios.get("http://localhost:3000/api/user_data");
+    const user = await axios.get("https://fresh-memes.herokuapp.com/api/user_data");
     let posts = [];
     data.data.children.map((post, index) => {
       posts[index] = {
