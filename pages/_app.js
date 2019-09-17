@@ -6,7 +6,9 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 import NProgress from 'nprogress';
 import Router from 'next/router';
+import axios from 'axios';
 
+NProgress.configure({ parent: '.main-body' });
 Router.events.on('routeChangeStart', url => {
   NProgress.start()
 });
@@ -24,7 +26,6 @@ class MyApp extends App {
 
   render() {
     const { Component, pageProps } = this.props;
-
     return (
       <Container>
         <Head>

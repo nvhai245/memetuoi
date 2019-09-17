@@ -19,16 +19,26 @@ router.get('/auth/logout', authController.logout);
 router.get('/auth/fblogin', passport.authenticate('facebook'));
 router.get('/auth/facebook/callback', passport.authenticate('facebook', { scope: ['read_stream', 'publish_actions'] }),
     (req, res) => {
-        res.send('fb login successful!');
+        res.redirect('/');
     });
 router.get('/auth/gglogin', passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
 router.get('/auth/google/callback', passport.authenticate('google'),
     (req, res) => {
-        res.send('Google login successful!');
+        res.redirect('/');
     });
 
 // Users
 router.param("userId", userController.getUserById);
+router.get('/api/user_data', (req, res) => {
+  if (req.user === undefined) {
+      // The user is not logged in
+      res.json({});
+  } else {
+      res.json({
+          user: req.user
+      });
+  }
+});
 router
     .route('/users/:userId')
     .get(userController.getAuthUser)

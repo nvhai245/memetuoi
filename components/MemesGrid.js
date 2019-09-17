@@ -323,7 +323,6 @@ export default function MemesGrid(props) {
                   <Button onClick={handleClose2} color="secondary"><KeyboardReturnIcon /> Re-edit</Button>
                   <Button onClick={doneAndDownload} color="primary"><GetAppIcon /> Download</Button>
                 </div>
-
               </Popover>
             </Paper>
           </Grid>

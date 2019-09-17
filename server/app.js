@@ -103,6 +103,10 @@ app.prepare().then(() => {
     return app.render(req, res, "/profile", routeParams);
   });
 
+  server.get("/test", async (req, res) => {
+    return app.render(req, res, "/test");
+  });
+
   server.get("*", (req, res) => {
     handle(req, res);
   });

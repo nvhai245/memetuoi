@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
         marginTop: "0.5rem"
     },
     container: {
-        marginTop: "5rem"
+        padding: "0 0"
     },
     signup: {
         fontWeight: 450
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const SignupForm = () => {
+const SignupForm = (props) => {
     const classes = useStyles();
     const [databaseErr, setErr] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(false);
@@ -61,9 +61,11 @@ const SignupForm = () => {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                Router.push(`/profile?userId=${data._id}`, `/profile`);
+                // Router.push(`/profile?userId=${data._id}`, `/profile`);
                 setSubmitStatus(false);
                 actions.setSubmitting(false);
+                props.submit();
+                Router.push('/');
             });
     };
     return (

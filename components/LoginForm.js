@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
+import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles(theme => ({
         marginTop: "0.5rem"
     },
     container: {
-        marginTop: "5rem"
+        padding: "0 0"
     },
     login: {
         fontWeight: 450
@@ -30,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const LoginForm = () => {
+const LoginForm = (props) => {
     const classes = useStyles();
     const [databaseErr, setErr] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(false);
@@ -57,12 +58,22 @@ const LoginForm = () => {
                 }
                 if (code == 200) {
                     setErr(false);
-                    Router.push(`/profile?userId=${data._id}`, `/profile`)
+                    // Router.push(`/profile?userId=${data._id}`, `/profile`);
+                    props.submit();
+                    Router.push('/');
                 }
                 actions.setSubmitting(false);
                 setSubmitStatus(false);
             });
     };
+    const fblogin = () => {
+        props.submit();
+        Router.push("/auth/fblogin");
+    }
+    const gglogin = () => {
+        props.submit();
+        Router.push("/auth/gglogin");
+    }
     return (
         <React.Fragment>
             <CssBaseline />
@@ -90,20 +101,30 @@ const LoginForm = () => {
                         })}
                         onSubmit={handleSubmit}
                         render={({ errors, status, touched }) => (
-                            <Form>
-                                <div className="form-group">
-                                    <Field fullWidth label="Email" name="email" type="email" component={TextField} className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                            <>
+                                <Form>
+                                    <div className="form-group">
+                                        <Field fullWidth label="Email" name="email" type="email" component={TextField} className={'form-control' + (errors.email && touched.email ? ' is-invalid' : '')} />
+                                    </div>
+                                    <div className="form-group">
+                                        <Field fullWidth label="Password" name="password" type="password" component={TextField} className={'form-control' + (errors.password && touched.password ? ' is-invalid' : '')} />
+                                    </div>
+                                    <div className="form-group">
+                                        <Field fullWidth label="Confirm Password" name="confirmPassword" type="password" component={TextField} className={'form-control' + (errors.confirmPassword && touched.confirmPassword ? ' is-invalid' : '')} />
+                                    </div>
+                                    <div className={classes.button}>
+                                        <Button style={{ fontSize: "150%" }} disabled={submitStatus} fullWidth type="submit" variant="contained" color="primary"> Login </Button>
+                                    </div>
+                                </Form>
+                                <div className={classes.socialButtons}>
+                                    <FacebookLoginButton onClick={fblogin} style={{ width: "49.5%", display: "inline-block", margin: "0 0", height: "2em" }}>
+                                        <span style={{fontSize: "90%"}}>Login with Facebook</span>
+                                    </FacebookLoginButton>
+                                    <GoogleLoginButton onClick={gglogin} style={{ width: "49.5%", display: "inline-block", marginLeft: "1%", marginRight: 0, height: "2em" }}>
+                                        <span style={{fontSize: "90%"}}>Login with Google</span>
+                                    </GoogleLoginButton>
                                 </div>
-                                <div className="form-group">
-                                    <Field fullWidth label="Password" name="password" type="password" component={TextField} className={'form-control' + (errors.password && touched.password ? ' is-invalid' : '')} />
-                                </div>
-                                <div className="form-group">
-                                    <Field fullWidth label="Confirm Password" name="confirmPassword" type="password" component={TextField} className={'form-control' + (errors.confirmPassword && touched.confirmPassword ? ' is-invalid' : '')} />
-                                </div>
-                                <div className={classes.button}>
-                                    <Button size="large" disabled={submitStatus} fullWidth type="submit" variant="contained" color="primary"> Login </Button>
-                                </div>
-                            </Form>
+                            </>
                         )}
                     />
                 </Paper>

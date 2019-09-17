@@ -23,8 +23,8 @@ class MyDocument extends Document {
           <link rel='stylesheet' type='text/css' href='/static/nprogress.css' />
         </Head>
         <body>
-          <Main />
-          <NextScript />
+            <Main />
+            <NextScript />
         </body>
       </html>
     );
@@ -62,7 +62,6 @@ MyDocument.getInitialProps = async ctx => {
     originalRenderPage({
       enhanceApp: App => props => sheets.collect(<App {...props} />),
     });
-
   const initialProps = await Document.getInitialProps(ctx);
 
   return {

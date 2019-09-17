@@ -47,14 +47,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function Feed(props) {
     let dat = Object.entries(props.data).slice(0, 10).map(entry => entry[1]);
-    console.log(dat);
     const [memeData, setMemeData] = useState(dat);
     const [isFetching, setIsFetching] = useState(false);
     const [numPosts, setNumPosts] = useState(10);
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
         setIsFetching(true);
-        console.log(document.documentElement.offsetHeight);
     }
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
@@ -111,6 +109,8 @@ export default function Feed(props) {
                             </video> :
                             value.type !== "image" ? value.media && value.media.type === "gfycat.com" ?
                                 <img style={{width: "100%"}} preload="metadata" src={value.media.oembed.thumbnail_url} /> :
+                                !value.media && value.domain === "imgur.com" ?
+                                <img style={{width: "100%"}} preload="metadata" src={value.preview.images[0].source.url.replace('amp;', '')} /> :
                                 <video style={{width: "100%"}} muted={true} preload="metadata" autoPlay={true} loop={true}>
                                     <source src={`${value.url.slice(0, value.url.lastIndexOf("."))}.mp4`} type="video/mp4" />
                                 </video> :
