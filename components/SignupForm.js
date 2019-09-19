@@ -39,7 +39,7 @@ const SignupForm = (props) => {
         setSubmitStatus(true);
         event.preventDefault();
         let code = undefined;
-        await fetch('https://fresh-memes.herokuapp.com/auth/signup', {
+        await fetch('http://fresh-memes.herokuapp.com/auth/signup', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -51,7 +51,7 @@ const SignupForm = (props) => {
             .then(data => {
                 console.log(data);
             });
-        fetch('https://fresh-memes.herokuapp.com/auth/login', {
+        fetch('http://fresh-memes.herokuapp.com/auth/login', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

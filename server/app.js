@@ -8,9 +8,6 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const logger = require('morgan');
 const expressValidator = require('express-validator');
-const { createServer } = require('https');
-const { parse } = require('url');
-const { readFileSync } = require('fs');
 
 //
 
@@ -39,19 +36,10 @@ mongoose.connection.on("error", err => {
   console.log(`DB connection error: ${err.message}`);
 });
 
-const options = {
-	key: fs.readFileSync('private/key.pem'),
-	cert: fs.readFileSync('private/cert.pem')
-}
 //Express custom server
 app.prepare().then(() => {
-  const server = createServer(options, (req, res) => {
-			// Be sure to pass `true` as the second argument to `url.parse`.
-			// This tells it to parse the query portion of the URL.
-			const parsedUrl = parse(req.url, true)
+  const server = express();
 
-			handle(req, res, parsedUrl)
-		});
   //Security config
   if (!dev) {
     server.use(helmet());
