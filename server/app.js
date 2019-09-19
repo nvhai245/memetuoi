@@ -8,6 +8,10 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const logger = require('morgan');
 const expressValidator = require('express-validator');
+const path = require('path');
+const url = require('url');
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
 
 //
 
@@ -42,6 +46,16 @@ app.prepare().then(() => {
 
   //Security config
   if (!dev) {
+    server.use(function(req, res, next) {
+      var proto = req.headers["x-forwarded-proto"];
+      if (proto === "https") {
+        res.set({
+          'Strict-Transport-Security': 'max-age=31557600' // one-year
+        });
+        return next();
+      }
+      res.redirect("https://" + req.headers.host + req.url);
+    });
     server.use(helmet());
     server.use(compression());
   }
@@ -52,9 +66,9 @@ app.prepare().then(() => {
   server.get("/_next/*", (req, res) => {
     handle(req, res);
   });
-  server.get("/static/*", (req, res) => {
-    handle(req, res);
-  });
+  server.use('/static', express.static(path.join(__dirname, 'static'), {
+    maxAge: dev ? '0' : '365d'
+  }));
 
   //Session config
   const sessionConfig = {
@@ -108,7 +122,8 @@ app.prepare().then(() => {
   });
 
   server.get("*", (req, res) => {
-    handle(req, res);
+    const parsedUrl = url.parse(req.url, true);
+    handle(req, res, parsedUrl);
   });
 
 
