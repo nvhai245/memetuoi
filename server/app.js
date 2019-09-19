@@ -8,8 +8,11 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const logger = require('morgan');
 const expressValidator = require('express-validator');
+const { createServer } = require('https');
+const { parse } = require('url');
+const { readFileSync } = require('fs');
 
-// 
+//
 
 //Passport config
 require('./models/User');
@@ -36,10 +39,13 @@ mongoose.connection.on("error", err => {
   console.log(`DB connection error: ${err.message}`);
 });
 
+const httpsOptions = {
+  key: readFileSync('./certificates/key.pem'),
+  cert: readFileSync('./certificates/cert.pem')
+};
 //Express custom server
 app.prepare().then(() => {
-  const server = express();
-
+  const server = createServer(httpsOptions, express());
   //Security config
   if (!dev) {
     server.use(helmet());
