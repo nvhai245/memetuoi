@@ -51,7 +51,7 @@ const SignupForm = (props) => {
             .then(data => {
                 console.log(data);
             });
-        fetch('https://fresh-memes.herokuapp.com/login', {
+        fetch('https://fresh-memes.herokuapp.com/auth/login', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
