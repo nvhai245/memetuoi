@@ -40,7 +40,7 @@ const LoginForm = (props) => {
         setSubmitStatus(true);
         event.preventDefault();
         let code = undefined;
-        fetch('http://fresh-memes.herokuapp.com/auth/login', {
+        fetch('/auth/login', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
