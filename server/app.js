@@ -126,6 +126,14 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   });
 
+  if(!dev) {
+    server.use(express.static(path.join(__dirname, 'build')));
+
+    // Express serve up index.html file if it doesn't recognize route
+    server.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    });
+  }
 
 
   server.listen(port, err => {
