@@ -1,5 +1,5 @@
 # memetuoi
-My first project, a meme site. Yeah you heard me.
+My first project, a meme site.
 
 Framworks used: Nextjs, Reactjs, Mongodb.
 
